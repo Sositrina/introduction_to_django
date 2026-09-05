@@ -1,5 +1,7 @@
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
+from django.urls import reverse_lazy
+
 from blog.models import Blog
 
 
@@ -45,7 +47,10 @@ class BlogUpdateView(UpdateView):
     model = Blog
     fields = ("title", "content", "preview", "is_published")
     template_name = "blog/blog_form.html"
-    success_url = "/blogs/{id}/"
+
+    def get_success_url(self):
+        """Возвращает адрес отредактированной записи."""
+        return reverse_lazy("blog_detail", kwargs={"pk": self.object.pk})
 
 
 class BlogDeleteView(DeleteView):
