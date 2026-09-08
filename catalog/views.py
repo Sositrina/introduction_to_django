@@ -1,26 +1,30 @@
 from django.shortcuts import render
 
+from django.views.generic import DetailView, ListView, TemplateView
+
+from django.views import View
+
 from catalog.models import Product
 
-def home(request):
+
+class HomeView(ListView):
     """Отображает главную страницу."""
-    products = Product.objects.all()
-    return render(request, 'home.html', {'products': products})
+    model = Product
+    template_name = "home.html"
+    context_object_name = "products"
 
-def contacts(request):
+class ContactsView(View):
     """Отображает страницу контактов."""
-    if request.method == 'POST':
-        return render(request, 'contacts.html', {'success': True})
 
-    return render(request, 'contacts.html')
+    def get(self, request):
+        return render(request, "contacts.html")
 
-def product_detail(request, pk):
+    def post(self, request):
+        return render(request, "contacts.html", {"success": True})
+
+class ProductView(DetailView):
     """Отображает товар."""
 
-    product = Product.objects.get(pk=pk)
-
-    return render(
-        request,
-        "product_detail.html",
-        {"product": product},
-    )
+    model = Product
+    template_name = "product_detail.html"
+    context_object_name = "product"
