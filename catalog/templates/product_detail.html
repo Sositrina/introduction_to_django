@@ -41,5 +41,13 @@
         Назад
     </a>
 
+    <a href="{% url 'product_update' product.pk %}" class="btn btn-outline-primary">
+        Редактировать
+    </a>
+
+    <a href="{% url 'product_delete' product.pk %}" class="btn btn-outline-danger">
+        Удалить
+    </a>
+
 </div>
 {% endblock %}
