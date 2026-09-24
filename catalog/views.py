@@ -1,3 +1,5 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 from django.shortcuts import render
 
 from django.views.generic import DetailView, ListView, CreateView, UpdateView, DeleteView
@@ -26,14 +28,14 @@ class ContactsView(View):
     def post(self, request):
         return render(request, "contacts.html", {"success": True})
 
-class ProductView(DetailView):
+class ProductView(LoginRequiredMixin, DetailView):
     """Отображает товар."""
 
     model = Product
     template_name = "product_detail.html"
     context_object_name = "product"
 
-class ProductCreateView(CreateView):
+class ProductCreateView(LoginRequiredMixin, CreateView):
     """Создает новый продукт."""
 
     model = Product
@@ -41,7 +43,7 @@ class ProductCreateView(CreateView):
     template_name = "product_form.html"
     success_url = reverse_lazy("home")
 
-class ProductUpdateView(UpdateView):
+class ProductUpdateView(LoginRequiredMixin, UpdateView):
     """Редактирует продукт."""
 
     model = Product
@@ -49,7 +51,7 @@ class ProductUpdateView(UpdateView):
     template_name = "product_form.html"
     success_url = reverse_lazy("home")
 
-class ProductDeleteView(DeleteView):
+class ProductDeleteView(LoginRequiredMixin, DeleteView):
     """Удаляет продукт."""
 
     model = Product
