@@ -8,6 +8,12 @@
         продать</p>
 </div>
 
+<div class="container mb-3">
+    <a href="{% url 'product_create' %}" class="btn btn-primary">
+        Добавить продукт
+    </a>
+</div>
+
 <div class="container">
     <div class="row text-center">
         {% for product in products %}
@@ -31,8 +37,8 @@
                 </div>
             </div>
         </div>
+        {% endfor %}
     </div>
-    {% endfor %}
 </div>
 
 {% endblock %}

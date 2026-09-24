@@ -1,10 +1,14 @@
 from django.shortcuts import render
 
-from django.views.generic import DetailView, ListView, TemplateView
+from django.views.generic import DetailView, ListView, CreateView, UpdateView, DeleteView
 
 from django.views import View
 
 from catalog.models import Product
+
+from catalog.forms import ProductForm
+
+from django.urls import reverse_lazy
 
 
 class HomeView(ListView):
@@ -28,3 +32,26 @@ class ProductView(DetailView):
     model = Product
     template_name = "product_detail.html"
     context_object_name = "product"
+
+class ProductCreateView(CreateView):
+    """Создает новый продукт."""
+
+    model = Product
+    form_class = ProductForm
+    template_name = "product_form.html"
+    success_url = reverse_lazy("home")
+
+class ProductUpdateView(UpdateView):
+    """Редактирует продукт."""
+
+    model = Product
+    form_class = ProductForm
+    template_name = "product_form.html"
+    success_url = reverse_lazy("home")
+
+class ProductDeleteView(DeleteView):
+    """Удаляет продукт."""
+
+    model = Product
+    template_name = "product_confirm_delete.html"
+    success_url = reverse_lazy("home")
