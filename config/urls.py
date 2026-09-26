@@ -20,11 +20,15 @@ from django.urls import include, path
 from django.conf import settings
 from django.conf.urls.static import static
 
+from users.views import register, user_login
+
 # Маршруты
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('catalog.urls')),
     path("blogs/", include("blog.urls")),
+    path("register/", register, name="register"),
+    path("login/", user_login, name="login"),
 
 ]
 
