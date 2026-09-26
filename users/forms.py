@@ -16,4 +16,4 @@ class UserLoginForm(forms.Form):
     """Форма авторизации пользователя."""
 
     email = forms.EmailField()
-    password = forms.CharField(widget=forms.PasswordInput)
+    password = forms.CharField(label="Пароль", widget=forms.PasswordInput)
