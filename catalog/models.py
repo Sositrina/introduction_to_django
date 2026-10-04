@@ -1,5 +1,7 @@
 from django.db import models
 
+from django.conf import settings
+
 
 class Category(models.Model):
     """Категория."""
@@ -28,9 +30,19 @@ class Product(models.Model):
         related_name="products",
         verbose_name="Категория"
     )
+
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name="Владелец",
+    )
+
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Цена за покупку")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата изменения")
+    is_published = models.BooleanField(default=False, verbose_name="Опубликован")
 
     def __str__(self):
         """Возвращает название продукта."""
@@ -39,3 +51,6 @@ class Product(models.Model):
     class Meta:
         verbose_name = "Продукт"
         verbose_name_plural = "Продукты"
+        permissions = [
+            ("can_unpublish_product", "Может отменять публикацию продукта"),
+        ]
