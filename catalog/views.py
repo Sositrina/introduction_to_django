@@ -14,12 +14,31 @@ from catalog.forms import ProductForm
 
 from django.urls import reverse_lazy
 
+from django.views.decorators.cache import cache_page
+
+from django.utils.decorators import method_decorator
+
+from catalog.services import get_products_by_category
+
 
 class HomeView(ListView):
     """Отображает главную страницу."""
     model = Product
     template_name = "home.html"
     context_object_name = "products"
+
+
+class ProductByCategoryView(ListView):
+    """Отображает продукты указанной категории."""
+
+    template_name = "products_by_category.html"
+    context_object_name = "products"
+
+    def get_queryset(self):
+        """Возвращает продукты выбранной категории."""
+        category_id = self.kwargs["category_id"]
+        return get_products_by_category(category_id)
+
 
 class ContactsView(View):
     """Отображает страницу контактов."""
@@ -30,6 +49,7 @@ class ContactsView(View):
     def post(self, request):
         return render(request, "contacts.html", {"success": True})
 
+@method_decorator(cache_page(60 * 15), name="dispatch")
 class ProductView(LoginRequiredMixin, DetailView):
     """Отображает товар."""
 
