@@ -1,6 +1,8 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
+
+from django.http import HttpResponseForbidden
 
 from django.views.generic import DetailView, ListView, CreateView, UpdateView, DeleteView
 
@@ -43,6 +45,12 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
     template_name = "product_form.html"
     success_url = reverse_lazy("home")
 
+    def form_valid(self, form):
+        """Назначает владельцем продукта текущего пользователя."""
+        form.instance.owner = self.request.user
+        return super().form_valid(form)
+
+
 class ProductUpdateView(LoginRequiredMixin, UpdateView):
     """Редактирует продукт."""
 
@@ -51,9 +59,43 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
     template_name = "product_form.html"
     success_url = reverse_lazy("home")
 
+    def dispatch(self, request, *args, **kwargs):
+        """Проверяет доступ к редактированию продукта."""
+        product = self.get_object()
+
+        if product.owner != request.user and not request.user.has_perm("catalog.can_unpublish_product"):
+            return HttpResponseForbidden("У вас нет прав для редактирования продукта.")
+
+        return super().dispatch(request, *args, **kwargs)
+
 class ProductDeleteView(LoginRequiredMixin, DeleteView):
     """Удаляет продукт."""
 
     model = Product
     template_name = "product_confirm_delete.html"
     success_url = reverse_lazy("home")
+
+    def dispatch(self, request, *args, **kwargs):
+        """Проверяет доступ к удалению продукта."""
+        product = self.get_object()
+
+        if product.owner != request.user and not request.user.has_perm("catalog.delete_product"):
+            return HttpResponseForbidden("У вас нет прав для удаления продукта.")
+
+        return super().dispatch(request, *args, **kwargs)
+
+
+class ProductUnpublishView(LoginRequiredMixin, View):
+    """Отменяет публикацию продукта."""
+
+    def post(self, request, pk):
+        """Снимает продукт с публикации."""
+        product = get_object_or_404(Product, pk=pk)
+
+        if not request.user.has_perm("catalog.can_unpublish_product"):
+            return HttpResponseForbidden("У вас нет прав для отмены публикации продукта.")
+
+        product.is_published = False
+        product.save()
+
+        return redirect("home")
