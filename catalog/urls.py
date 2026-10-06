@@ -6,7 +6,8 @@ from catalog.views import (
     ProductCreateView,
     ProductUpdateView,
     ProductDeleteView,
-    ProductUnpublishView)
+    ProductUnpublishView,
+    ProductByCategoryView)
 
 # Маршруты приложения
 urlpatterns = [
@@ -17,4 +18,6 @@ urlpatterns = [
     path("products/<int:pk>/edit/", ProductUpdateView.as_view(), name="product_update"),
     path("products/<int:pk>/delete/", ProductDeleteView.as_view(), name="product_delete"),
     path("products/<int:pk>/unpublish/", ProductUnpublishView.as_view(), name="product_unpublish"),
+    path("categories/<int:category_id>/products/",ProductByCategoryView.as_view(),name="products_by_category",
+    ),
 ]
